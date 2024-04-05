@@ -1,9 +1,11 @@
 import { Box, Grid, Typography, TextField, Button } from "@mui/material";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
-import { useRef } from "react";
+import { markerLocation } from "../main";
 
 function App() {
-	const inputRef = useRef(null);
+	const buttonClick = () => {
+		markerLocation();
+	};
 	return (
 		<Box
 			sx={{
@@ -20,15 +22,12 @@ function App() {
 				padding: "2rem",
 			}}
 		>
-			<TextField
-				label="Enter coordinates"
-				ref={inputRef}
-				fullWidth
-				size="small"
-			/>
+			<TextField id="inputlawda" fullWidth size="small" />
 			<Grid container gap={2} mt={2}>
 				<Grid item>
-					<Button variant="outlined">Choose on Map</Button>
+					<Button variant="outlined" onClick={buttonClick}>
+						Choose on Map
+					</Button>
 				</Grid>
 				<Grid item>
 					<Button variant="contained" startIcon={<MyLocationIcon />}>

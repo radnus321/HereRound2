@@ -7,19 +7,19 @@ const platform = new H.service.Platform({
 	apikey: apikey,
 });
 let userLocationX = 0;
-let userLocationY  = 0;
-function getLocation(){
-	if(navigator.geolocation){
-		navigator.geolocation.getCurrentPosition(showPosition)
-	}else{
-		console.error("Geolocation is not supported by this browser")
+let userLocationY = 0;
+function getLocation() {
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(showPosition);
+	} else {
+		console.error("Geolocation is not supported by this browser");
 	}
 }
-function showPosition(position){
+function showPosition(position) {
 	userLocationX = position.coords.latitude;
 	userLocationY = position.coords.longitude;
-	console.log(userLocationX)
-	console.log(userLocationY)
+	console.log(userLocationX);
+	console.log(userLocationY);
 }
 getLocation();
 const defaultLayers = platform.createDefaultLayers();
@@ -32,34 +32,30 @@ const behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
 const ui = H.ui.UI.createDefault(map, defaultLayers);
 
 window.addEventListener("resize", () => map.getViewPort().resize());
-let select = "restaurants"
+let select = "restaurants";
 let radius = 300;
 
 const getShopIndex = async () => {
 	let shopCount = 0;
 	const URL = `https://discover.search.hereapi.com/v1/discover?in=circle:28.653229,77.308601;r=${radius}&q=shops&apiKey=${apikey}`;
-	await axios.get(URL).then((response)=>{
-		const items = response.data.items
-		shopCount = items.length
-	})
-	return shopCount
-}
+	await axios.get(URL).then((response) => {
+		const items = response.data.items;
+		shopCount = items.length;
+	});
+	return shopCount;
+};
 
 const getRestaurantIndex = async () => {
 	let restaurantCount = 0;
 	const URL = `https://discover.search.hereapi.com/v1/discover?in=circle:28.653229,77.308601;r=${radius}&q=restaurant&apiKey=${apikey}`;
-	await axios.get(URL).then((response)=>{
-		const items = response.data.items
-		restaurantCount = items.length
-	})
-	return restaurantCount
-}
+	await axios.get(URL).then((response) => {
+		const items = response.data.items;
+		restaurantCount = items.length;
+	});
+	return restaurantCount;
+};
 
-const data = axios.get('https://www.worldpop.org/rest/data');
-console.log(data)
-
-function markerLocation(idNo) {
-	const temp = idNo;
+function markerLocation() {
 	const center = map.getCenter();
 	const marker = new H.map.Marker(center, { volatility: true });
 	marker.draggable = true;
@@ -76,17 +72,11 @@ function markerLocation(idNo) {
 	map.addEventListener(
 		"dragend",
 		function dragEndFunc(evt) {
-			const deliveryCount = temp;
-			console.log("current selected is: " + deliveryCount);
 			if (evt.target instanceof H.map.Marker) {
 				console.log(evt.target.getGeometry());
 				behavior.enable();
 				const loc = evt.target.getGeometry();
-				if (deliveryCount > 0)
-					document.getElementById(
-						`delivery${deliveryCount}`
-					).value = `${loc.lat}, ${loc.lng}`;
-				else document.getElementById("start").value = `${loc.lat}, ${loc.lng}`;
+				document.getElementById("inputlawda").value = `${loc.lat}, ${loc.lng}`;
 				map.removeObject(evt.target);
 				map.removeEventListener("dragend", dragEndFunc, false);
 			}
