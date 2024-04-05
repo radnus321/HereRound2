@@ -1,3 +1,8 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
 #map {
 	position: absolute;
 	top: 0;
@@ -5,4 +10,11 @@
 	width: 100vw;
 	height: 100vh;
 	background: grey;
+}
+
+#root {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
 }
