@@ -37,6 +37,21 @@ const getRestaurantIndex = async () => {
 	return restaurantCount;
 };
 
+const getJamIndex = async () => {
+	let sum = 0;
+	let length = 1;
+	const URL = `https://data.traffic.hereapi.com/v7/flow?in=circle:52.50811,13.47853;r=${radius}&locationReferencing=olr&apiKey=${apikey}`;
+	await axios.get(URL).then((response) => {
+		const items = response.data.results
+		length  = items.length
+		items.map((item)=>{
+			sum += item.currentFlow.jamFactor
+		})
+	});
+	return (sum == 0) ? 0 : sum/length;
+};
+
+
 function markerLocation() {
 	const center = map.getCenter();
 	const marker = new H.map.Marker(center, { volatility: true });
