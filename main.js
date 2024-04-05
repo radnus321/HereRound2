@@ -57,3 +57,54 @@ const getRestaurantIndex = async () => {
 
 const data = axios.get('https://www.worldpop.org/rest/data');
 console.log(data)
+
+function markerLocation(idNo) {
+	const temp = idNo;
+	const center = map.getCenter();
+	const marker = new H.map.Marker(center, { volatility: true });
+	marker.draggable = true;
+	map.addObject(marker);
+
+	// Add event listeners for marker movement
+	map.addEventListener(
+		"dragstart",
+		(evt) => {
+			if (evt.target instanceof H.map.Marker) behavior.disable();
+		},
+		false
+	);
+	map.addEventListener(
+		"dragend",
+		function dragEndFunc(evt) {
+			const deliveryCount = temp;
+			console.log("current selected is: " + deliveryCount);
+			if (evt.target instanceof H.map.Marker) {
+				console.log(evt.target.getGeometry());
+				behavior.enable();
+				const loc = evt.target.getGeometry();
+				if (deliveryCount > 0)
+					document.getElementById(
+						`delivery${deliveryCount}`
+					).value = `${loc.lat}, ${loc.lng}`;
+				else document.getElementById("start").value = `${loc.lat}, ${loc.lng}`;
+				map.removeObject(evt.target);
+				map.removeEventListener("dragend", dragEndFunc, false);
+			}
+		},
+		false
+	);
+	map.addEventListener(
+		"drag",
+		(evt) => {
+			const pointer = evt.currentPointer;
+			if (evt.target instanceof H.map.Marker) {
+				evt.target.setGeometry(
+					map.screenToGeo(pointer.viewportX, pointer.viewportY)
+				);
+			}
+		},
+		false
+	);
+}
+
+export { markerLocation };

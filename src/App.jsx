@@ -1,11 +1,43 @@
+import { Box, Grid, Typography, TextField, Button } from "@mui/material";
+import MyLocationIcon from "@mui/icons-material/MyLocation";
+import { useRef } from "react";
+
 function App() {
-  return (
-    <>
-      <div>
-        HI
-      </div>
-    </>
-  )
+	const inputRef = useRef(null);
+	return (
+		<Box
+			sx={{
+				marginTop: "2vh",
+				marginLeft: "2vh",
+				height: "86vh",
+				width: "25vw",
+				borderRadius: "24px",
+				background:
+					"radial-gradient(107.32% 141.42% at 0% 0%, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.31) 99.99%, rgba(255, 255, 255, 0) 100%)",
+				boxShadow:
+					"4px 4px 40px 0px rgba(0, 0, 0, 0.36), -5px -5px 250px 0px rgba(255, 255, 255, 0.02) inset",
+				backdropFilter: "blur(21px)",
+				padding: "2rem",
+			}}
+		>
+			<TextField
+				label="Enter coordinates"
+				ref={inputRef}
+				fullWidth
+				size="small"
+			/>
+			<Grid container gap={2} mt={2}>
+				<Grid item>
+					<Button variant="outlined">Choose on Map</Button>
+				</Grid>
+				<Grid item>
+					<Button variant="contained" startIcon={<MyLocationIcon />}>
+						My Location
+					</Button>
+				</Grid>
+			</Grid>
+		</Box>
+	);
 }
 
-export default App
+export default App;
