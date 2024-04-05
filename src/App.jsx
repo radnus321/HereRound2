@@ -1,11 +1,34 @@
-import { Box, Grid, Typography, TextField, Button } from "@mui/material";
+import {
+	Box,
+	Slider,
+	Grid,
+	Typography,
+	TextField,
+	Button,
+} from "@mui/material";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
-import { markerLocation } from "../main";
+import { markerLocation, radiChange } from "../main";
 
 function App() {
 	const buttonClick = () => {
 		markerLocation();
 	};
+	function getLocation() {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(showPosition);
+		} else {
+			console.error("Geolocation is not supported by this browser");
+		}
+	}
+	function showPosition(position) {
+		const userLocationX = position.coords.latitude;
+		const userLocationY = position.coords.longitude;
+		console.log(userLocationX);
+		console.log(userLocationY);
+		document.getElementById(
+			"inputlawda"
+		).value = `${userLocationX}, ${userLocationY}`;
+	}
 	return (
 		<Box
 			sx={{
@@ -30,11 +53,28 @@ function App() {
 					</Button>
 				</Grid>
 				<Grid item>
-					<Button variant="contained" startIcon={<MyLocationIcon />}>
+					<Button
+						variant="contained"
+						onClick={getLocation}
+						startIcon={<MyLocationIcon />}
+					>
 						My Location
 					</Button>
 				</Grid>
 			</Grid>
+			<Typography variant="h6" mt={2}>
+				Radius
+			</Typography>
+			<Slider
+				onChangeCommitted={(e, value) => radiChange(value)}
+				defaultValue={300}
+				getAriaValueText={(value) => `${value}m`}
+				valueLabelDisplay="auto"
+				step={50}
+				marks
+				min={50}
+				max={1000}
+			/>
 		</Box>
 	);
 }

@@ -1,27 +1,10 @@
 import axios from "axios";
-
 const apikey = import.meta.env.VITE_APIKEY;
 const appid = import.meta.env.VITE_APPID;
 const mapContainer = document.getElementById("map");
 const platform = new H.service.Platform({
 	apikey: apikey,
 });
-let userLocationX = 0;
-let userLocationY = 0;
-function getLocation() {
-	if (navigator.geolocation) {
-		navigator.geolocation.getCurrentPosition(showPosition);
-	} else {
-		console.error("Geolocation is not supported by this browser");
-	}
-}
-function showPosition(position) {
-	userLocationX = position.coords.latitude;
-	userLocationY = position.coords.longitude;
-	console.log(userLocationX);
-	console.log(userLocationY);
-}
-getLocation();
 const defaultLayers = platform.createDefaultLayers();
 const map = new H.Map(mapContainer, defaultLayers.vector.normal.map, {
 	zoom: 10,
@@ -32,7 +15,6 @@ const behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
 const ui = H.ui.UI.createDefault(map, defaultLayers);
 
 window.addEventListener("resize", () => map.getViewPort().resize());
-let select = "restaurants";
 let radius = 300;
 
 const getShopIndex = async () => {
@@ -97,4 +79,8 @@ function markerLocation() {
 	);
 }
 
-export { markerLocation };
+function radiChange(rad) {
+	radius = rad;
+}
+
+export { markerLocation, radiChange };
