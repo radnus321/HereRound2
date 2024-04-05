@@ -7,27 +7,27 @@ import {
 	Button,
 } from "@mui/material";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
-import { markerLocation, radiChange } from "../main";
+import { markerLocation, radiChange, compare } from "../main";
 
 function App() {
-	const buttonClick = () => {
-		markerLocation();
-	};
-	function getLocation() {
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(showPosition);
-		} else {
-			console.error("Geolocation is not supported by this browser");
-		}
-	}
-	function showPosition(position) {
-		const userLocationX = position.coords.latitude;
-		const userLocationY = position.coords.longitude;
-		console.log(userLocationX);
-		console.log(userLocationY);
-		document.getElementById(
-			"inputlawda"
-		).value = `${userLocationX}, ${userLocationY}`;
+	function ownLocation(id) {
+		const getLocation = () => {
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(showPosition);
+			} else {
+				console.error("Geolocation is not supported by this browser");
+			}
+		};
+		const showPosition = (position) => {
+			const userLocationX = position.coords.latitude;
+			const userLocationY = position.coords.longitude;
+			console.log(userLocationX);
+			console.log(userLocationY);
+			document.getElementById(
+				`input${id}`
+			).value = `${userLocationX}, ${userLocationY}`;
+		};
+		getLocation();
 	}
 	return (
 		<Box
@@ -45,17 +45,48 @@ function App() {
 				padding: "2rem",
 			}}
 		>
-			<TextField id="inputlawda" fullWidth size="small" />
-			<Grid container gap={2} mt={2}>
+			<Typography variant="h6">Location 1</Typography>
+			<TextField id="input1" fullWidth size="small" mt={2} />
+			<Grid container gap={1} mt={1}>
 				<Grid item>
-					<Button variant="outlined" onClick={buttonClick}>
+					<Button
+						size="small"
+						variant="outlined"
+						onClick={() => markerLocation(1)}
+					>
 						Choose on Map
 					</Button>
 				</Grid>
 				<Grid item>
 					<Button
+						size="small"
 						variant="contained"
-						onClick={getLocation}
+						onClick={() => ownLocation(1)}
+						startIcon={<MyLocationIcon />}
+					>
+						My Location
+					</Button>
+				</Grid>
+			</Grid>
+			<Typography variant="h6" mt={3}>
+				Location 2
+			</Typography>
+			<TextField id="input2" fullWidth size="small" mt={2} />
+			<Grid container gap={1} mt={1}>
+				<Grid item>
+					<Button
+						size="small"
+						variant="outlined"
+						onClick={() => markerLocation(2)}
+					>
+						Choose on Map
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						size="small"
+						variant="contained"
+						onClick={() => ownLocation(2)}
 						startIcon={<MyLocationIcon />}
 					>
 						My Location
@@ -75,6 +106,9 @@ function App() {
 				min={50}
 				max={1000}
 			/>
+			<Button fullWidth mt="auto" variant="contained" onClick={compare}>
+				Compare
+			</Button>
 		</Box>
 	);
 }
