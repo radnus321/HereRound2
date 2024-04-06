@@ -1,6 +1,7 @@
 import axios from "axios";
 const apikey = import.meta.env.VITE_APIKEY;
 const appid = import.meta.env.VITE_APPID;
+// import { loadingOff } from "./src/App";
 const mapContainer = document.getElementById("map");
 const platform = new H.service.Platform({
 	apikey: apikey,
@@ -17,9 +18,11 @@ const ui = H.ui.UI.createDefault(map, defaultLayers);
 window.addEventListener("resize", () => map.getViewPort().resize());
 let radius = 300;
 
-const getShopIndex = async () => {
+const getShopIndex = async (add) => {
 	let shopCount = 0;
-	const URL = `https://discover.search.hereapi.com/v1/discover?in=circle:28.653229,77.308601;r=${radius}&q=shops&apiKey=${apikey}`;
+	const loc = add.split(" ");
+	const URL = `https://discover.search.hereapi.com/v1/discover?in=circle:${loc[0]}${loc[1]};r=${radius}&q=shops&apiKey=${apikey}`;
+
 	await axios.get(URL).then((response) => {
 		const items = response.data.items;
 		shopCount = items.length;
@@ -27,9 +30,10 @@ const getShopIndex = async () => {
 	return shopCount;
 };
 
-const getRestaurantIndex = async () => {
+const getRestaurantIndex = async (add) => {
 	let restaurantCount = 0;
-	const URL = `https://discover.search.hereapi.com/v1/discover?in=circle:28.653229,77.308601;r=${radius}&q=restaurant&apiKey=${apikey}`;
+	const loc = add.split(" ");
+	const URL = `https://discover.search.hereapi.com/v1/discover?in=circle:${loc[0]}${loc[1]};r=${radius}&q=restaurant&apiKey=${apikey}`;
 	await axios.get(URL).then((response) => {
 		const items = response.data.items;
 		restaurantCount = items.length;
@@ -37,10 +41,11 @@ const getRestaurantIndex = async () => {
 	return restaurantCount;
 };
 
-const getJamIndex = async () => {
+const getJamIndex = async (add) => {
 	let sum = 0;
 	let length = 1;
-	const URL = `https://data.traffic.hereapi.com/v7/flow?in=circle:52.50811,13.47853;r=${radius}&locationReferencing=olr&apiKey=${apikey}`;
+	const loc = add.split(" ");
+	const URL = `https://data.traffic.hereapi.com/v7/flow?in=circle:${loc[0]}${loc[1]};r=${radius}&locationReferencing=olr&apiKey=${apikey}`;
 	await axios.get(URL).then((response) => {
 		const items = response.data.results;
 		length = items.length;
@@ -104,7 +109,7 @@ function radiChange(rad) {
 let markers = [];
 let group = new H.map.Group();
 
-function compare() {
+async function compare() {
 	let coordinates = [];
 	coordinates.push(document.getElementById("input1").value);
 	coordinates.push(document.getElementById("input2").value);
@@ -120,16 +125,66 @@ function compare() {
 		map.addObject(marker);
 		markers.push(marker);
 	});
-	group = new H.map.Group();
-	// add markers to the group
-	group.addObjects(markers);
-	map.addObject(group);
+	// group = new H.map.Group();
+	// // add markers to the group
+	// group.addObjects(markers);
+	// map.addObject(group);
 
-	// get geo bounding box for the group and set it to the map
-	map.getViewModel().setLookAtData({
-		bounds: group.getBoundingBox(),
+	// // get geo bounding box for the group and set it to the map
+	// map.getViewModel().setLookAtData({
+	// 	bounds: group.getBoundingBox(),
+	// });
+	// //Need a way to zoom out a little
+	let comp = 0;
+
+	await Promise.all([
+		getShopIndex(coordinates[0]),
+		getShopIndex(coordinates[1]),
+	]).then((values) => {
+		const normalizingFactor = 10;
+		if (values[0] > values[1]) {
+			comp -= normalizingFactor;
+		}
+		if (values[0] < values[1]) {
+			comp += normalizingFactor;
+		}
 	});
-	//Need a way to zoom out a little
+	await Promise.all([
+		getJamIndex(coordinates[0]),
+		getJamIndex(coordinates[1]),
+	]).then((values) => {
+		const normalizingFactor = 8;
+		if (values[0] > values[1]) {
+			comp += normalizingFactor;
+		}
+		if (values[0] < values[1]) {
+			comp -= normalizingFactor;
+		}
+	});
+	await Promise.all([
+		getRestaurantIndex(coordinates[0]),
+		getRestaurantIndex(coordinates[1]),
+	]).then((values) => {
+		const normalizingFactor = 5;
+		if (values[0] > values[1]) {
+			comp += normalizingFactor;
+		}
+		if (values[0] < values[1]) {
+			comp -= normalizingFactor;
+		}
+	});
+	// loadingOff();
+	console.log(comp);
+	const res = document.getElementById("result");
+	if (comp > 0) {
+		res.innerHTML = "Location 1 is better than Location 2";
+	}
+	if (comp < 0) {
+		res.innerHTML = "Location 2 is better than Location 1";
+	}
+	if (comp == 0) {
+		res.innerHTML = "Both locations are eaually good";
+	}
 }
 
 export { markerLocation, radiChange, compare };
