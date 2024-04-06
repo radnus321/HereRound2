@@ -12,22 +12,34 @@ import MyLocationIcon from "@mui/icons-material/MyLocation";
 import { markerLocation, radiChange, compare } from "../main";
 import { useState } from "react";
 
-// function loadingOff() {
-// 	setLoading(false);
-// }
-
 function App() {
 	const [open, setOpen] = useState(false);
-	// const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [loading2, setLoading2] = useState(false);
+	const [loading3, setLoading3] = useState(false);
 	function handleClose() {
 		setOpen(false);
 	}
 	function compareClick() {
 		compare();
 		setOpen(true);
-		// setLoading(true);
+		setLoading(true);
+		setTimeout(() => {
+			setLoading(false);
+		}, 1000);
 	}
 	function ownLocation(id) {
+		if (id == 1) {
+			setLoading2(true);
+			setTimeout(() => {
+				setLoading2(false);
+			}, 1000);
+		} else {
+			setLoading3(true);
+			setTimeout(() => {
+				setLoading3(false);
+			}, 500);
+		}
 		const getLocation = () => {
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(showPosition);
@@ -80,7 +92,7 @@ function App() {
 							size="small"
 							variant="contained"
 							onClick={() => ownLocation(1)}
-							startIcon={<MyLocationIcon />}
+							startIcon={loading2 ? <CircularProgress /> : <MyLocationIcon />}
 						>
 							My Location
 						</Button>
@@ -105,7 +117,7 @@ function App() {
 							size="small"
 							variant="contained"
 							onClick={() => ownLocation(2)}
-							startIcon={<MyLocationIcon />}
+							startIcon={loading3 ? <CircularProgress /> : <MyLocationIcon />}
 						>
 							My Location
 						</Button>
@@ -152,7 +164,7 @@ function App() {
 						backdropFilter: "blur(21px)",
 					}}
 				>
-					{/* {loading && <CircularProgress />} */}
+					{loading && <CircularProgress />}
 					<Typography variant="h4">
 						<span id="result"></span>
 					</Typography>
@@ -163,4 +175,3 @@ function App() {
 }
 
 export default App;
-// export { loadingOff };

@@ -183,7 +183,7 @@ async function compare() {
 		res.innerHTML = "Location 2 is better than Location 1";
 	}
 	if (comp == 0) {
-		res.innerHTML = "Both locations are eaually good";
+		res.innerHTML = "Both locations are equally good";
 	}
 }
 
